@@ -69,7 +69,7 @@ bot.on('callback_query', async (query) => {
         } else {
             const tutorialMessage = `Pour profiter des hacks, veuillez créer un compte authentique en utilisant le code promo ZFree221\n pour connecter le bot aux algorithmes.\nVeuillez regarder\n ce tutoriel 👇`;
             bot.sendMessage(chatId, tutorialMessage);
-            bot.sendVideo(chatId, 'https://t.me/gsgzheh/3').then(() => {
+            bot.sendVideo(chatId, 'https://t.me/gsgzheh/7').then(() => {
                 const options = {
                     reply_markup: {
                         inline_keyboard: [
