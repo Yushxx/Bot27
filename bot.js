@@ -111,7 +111,7 @@ bot.on('callback_query', async (query) => {
             userSequences[chatId].lastSequenceTime = now;
         }
     } else if (callbackData === 'pro_version') {
-        bot.sendMessage(chatId, 'Contactez l\'admin @medat pour obtenir la version pro.');
+        bot.sendMessage(chatId, 'Contactez l\'admin @medatt00 pour obtenir la version pro.');
     }
 });
 
