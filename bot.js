@@ -64,7 +64,7 @@ bot.on('callback_query', async (query) => {
         if (!isMember) {
             bot.sendMessage(chatId, 'Veuillez rejoindre les canaux d\'abord.');
         } else {
-            const tutorialMessage = `Pour profiter des hacks, veuillez créer un code authentique pour connecter le bot aux algorithmes.\nVeuillez regarder ce tutoriel 👇`;
+            const tutorialMessage = `Pour profiter des hacks, veuillez créer un compte authentique en utilisant le code promo ZFree221\n pour connecter le bot aux algorithmes.\nVeuillez regarder\n ce tutoriel 👇`;
             bot.sendMessage(chatId, tutorialMessage);
             bot.sendVideo(chatId, 'https://t.me/gsgzheh/3').then(() => {
                 const options = {
