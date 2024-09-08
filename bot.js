@@ -88,9 +88,9 @@ bot.on('callback_query', async (query) => {
         const user = userSequences[chatId] || { count: 0, lastSequenceTime: 0 };
         const isProUser = proUserIds.includes(chatId);
 
-        if (now - user.lastSequenceTime < 5 * 60 * 1000 && !isProUser) {
+        if (now - user.lastSequenceTime < 5 * 60 * 1000) {
             bot.sendMessage(chatId, 'Veuillez attendre le prochain signal dans 5 minutes.');
-        } else if (user.count >= freeSequenceLimit && !isProUser) {
+        } else if (!isProUser && user.count >= freeSequenceLimit) {
             const options = {
                 reply_markup: {
                     inline_keyboard: [
