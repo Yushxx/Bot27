@@ -8,6 +8,7 @@ const bot = new TelegramBot(token, { polling: true });
 const channelIds = [-1001923341484, -1002017559099];
 const freeSequenceLimit = 5;
 let userSequences = {};
+const proUsers = [6461768442, 5873712733]; // Ajoutez ici les IDs des utilisateurs pro
 
 // Fonction pour générer une séquence de jeu Apple
 function generateAppleSequence() {
@@ -84,18 +85,8 @@ bot.on('callback_query', async (query) => {
         bot.sendMessage(chatId, 'Veuillez envoyer votre id .');
     } else if (callbackData === 'get_signal') {
         const now = Date.now();
-        if (now - userSequences[chatId].lastSequenceTime < 5 * 60 * 1000) {
-            bot.sendMessage(chatId, 'Veuillez attendre le prochain signal dans 5 minutes.');
-        } else if (userSequences[chatId].count >= freeSequenceLimit) {
-            const options = {
-                reply_markup: {
-                    inline_keyboard: [
-                        [{ text: 'Version Pro', callback_data: 'pro_version' }]
-                    ]
-                }
-            };
-            bot.sendMessage(chatId, 'Votre essai gratuit est terminé pour aujourd\'hui.', options);
-        } else {
+        if (proUsers.includes(chatId)) {
+            // Utilisateur pro, pas de limite de séquence
             const sequenceTemplateApple = `🔔 CONFIRMED ENTRY!\n🍎 Apple : 3\n🔐 Attempts: 4\n⏰ Validity: 5 minutes\n`;
             const signalMessage = `${sequenceTemplateApple}2.41:${generateAppleSequence()}\n1.93:${generateAppleSequence()}\n1.54:${generateAppleSequence()}\n1.23:${generateAppleSequence()}`;
 
@@ -107,8 +98,33 @@ bot.on('callback_query', async (query) => {
                 }
             };
             bot.sendMessage(chatId, signalMessage, options);
-            userSequences[chatId].count++;
-            userSequences[chatId].lastSequenceTime = now;
+        } else {
+            if (now - userSequences[chatId].lastSequenceTime < 5 * 60 * 1000) {
+                bot.sendMessage(chatId, 'Veuillez attendre le prochain signal dans 5 minutes.');
+            } else if (userSequences[chatId].count >= freeSequenceLimit) {
+                const options = {
+                    reply_markup: {
+                        inline_keyboard: [
+                            [{ text: 'Version Pro', callback_data: 'pro_version' }]
+                        ]
+                    }
+                };
+                bot.sendMessage(chatId, 'Votre essai gratuit est terminé pour aujourd\'hui.', options);
+            } else {
+                const sequenceTemplateApple = `🔔 CONFIRMED ENTRY!\n🍎 Apple : 3\n🔐 Attempts: 4\n⏰ Validity: 5 minutes\n`;
+                const signalMessage = `${sequenceTemplateApple}2.41:${generateAppleSequence()}\n1.93:${generateAppleSequence()}\n1.54:${generateAppleSequence()}\n1.23:${generateAppleSequence()}`;
+
+                const options = {
+                    reply_markup: {
+                        inline_keyboard: [
+                            [{ text: 'Next Signal ✅', callback_data: 'get_signal' }]
+                        ]
+                    }
+                };
+                bot.sendMessage(chatId, signalMessage, options);
+                userSequences[chatId].count++;
+                userSequences[chatId].lastSequenceTime = now;
+            }
         }
     } else if (callbackData === 'pro_version') {
         bot.sendMessage(chatId, 'Contactez l\'admin @medatt00 pour obtenir la version pro.');
