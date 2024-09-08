@@ -85,20 +85,9 @@ bot.on('callback_query', async (query) => {
         bot.sendMessage(chatId, 'Veuillez envoyer votre id .');
     } else if (callbackData === 'get_signal') {
         const now = Date.now();
-        if (proUsers.includes(chatId)) {
-            // Utilisateur pro, pas de limite de séquence
-            const sequenceTemplateApple = `🔔 CONFIRMED ENTRY!\n🍎 Apple : 3\n🔐 Attempts: 4\n⏰ Validity: 5 minutes\n`;
-            const signalMessage = `${sequenceTemplateApple}2.41:${generateAppleSequence()}\n1.93:${generateAppleSequence()}\n1.54:${generateAppleSequence()}\n1.23:${generateAppleSequence()}`;
+        const userIsPro = proUsers.includes(chatId);
 
-            const options = {
-                reply_markup: {
-                    inline_keyboard: [
-                        [{ text: 'Next Signal ✅', callback_data: 'get_signal' }]
-                    ]
-                }
-            };
-            bot.sendMessage(chatId, signalMessage, options);
-        } else {
+        if (!userIsPro) {
             if (now - userSequences[chatId].lastSequenceTime < 5 * 60 * 1000) {
                 bot.sendMessage(chatId, 'Veuillez attendre le prochain signal dans 5 minutes.');
             } else if (userSequences[chatId].count >= freeSequenceLimit) {
@@ -110,21 +99,24 @@ bot.on('callback_query', async (query) => {
                     }
                 };
                 bot.sendMessage(chatId, 'Votre essai gratuit est terminé pour aujourd\'hui.', options);
-            } else {
-                const sequenceTemplateApple = `🔔 CONFIRMED ENTRY!\n🍎 Apple : 3\n🔐 Attempts: 4\n⏰ Validity: 5 minutes\n`;
-                const signalMessage = `${sequenceTemplateApple}2.41:${generateAppleSequence()}\n1.93:${generateAppleSequence()}\n1.54:${generateAppleSequence()}\n1.23:${generateAppleSequence()}`;
-
-                const options = {
-                    reply_markup: {
-                        inline_keyboard: [
-                            [{ text: 'Next Signal ✅', callback_data: 'get_signal' }]
-                        ]
-                    }
-                };
-                bot.sendMessage(chatId, signalMessage, options);
-                userSequences[chatId].count++;
-                userSequences[chatId].lastSequenceTime = now;
+                return; // Ne pas envoyer de signal si la limite est atteinte
             }
+        }
+
+        const sequenceTemplateApple = `🔔 CONFIRMED ENTRY!\n🍎 Apple : 3\n🔐 Attempts: 4\n⏰ Validity: 5 minutes\n`;
+        const signalMessage = `${sequenceTemplateApple}2.41:${generateAppleSequence()}\n1.93:${generateAppleSequence()}\n1.54:${generateAppleSequence()}\n1.23:${generateAppleSequence()}`;
+
+        const options = {
+            reply_markup: {
+                inline_keyboard: [
+                    [{ text: 'Next Signal ✅', callback_data: 'get_signal' }]
+                ]
+            }
+        };
+        bot.sendMessage(chatId, signalMessage, options);
+        if (!userIsPro) {
+            userSequences[chatId].count++;
+            userSequences[chatId].lastSequenceTime = now;
         }
     } else if (callbackData === 'pro_version') {
         bot.sendMessage(chatId, 'Contactez l\'admin @medatt00 pour obtenir la version pro.');
