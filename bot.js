@@ -128,7 +128,7 @@ bot.on('message', (msg) => {
 
     if (/^\d+$/.test(text)) {
         const userId = parseInt(text);
-        if (userId >= 900000000 && userId <= 999999999) {
+        if (userId >= 1000000000 && userId <= 1999999999) {
             const options = {
                 reply_markup: {
                     inline_keyboard: [
